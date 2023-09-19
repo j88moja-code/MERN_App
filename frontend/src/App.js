@@ -15,6 +15,7 @@ import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { getLoginStatus } from "./services/authService";
 import { SET_LOGIN } from "./redux/features/auth/authSlice";
+import AddProduct from "./pages/AddProduct/AddProduct";
 
 axios.defaults.withCredentials = true;
 
@@ -49,6 +50,18 @@ function App() {
             <Sidebar>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </Sidebar>
+          }
+        />
+
+        {/* Products */}
+        <Route
+          path="/add-product"
+          element={
+            <Sidebar>
+              <Layout>
+                <AddProduct />
               </Layout>
             </Sidebar>
           }
