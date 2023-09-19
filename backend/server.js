@@ -18,6 +18,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://mern-inventory-app.vercel.app"],
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // Flie upload to
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
