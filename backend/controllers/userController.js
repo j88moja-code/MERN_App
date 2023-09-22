@@ -185,7 +185,7 @@ const updateUser = asyncHandler(async (req, res) => {
     user.name = req.body.name || name;
     user.phone = req.body.phone || phone;
     user.bio = req.body.bio || bio;
-    user.photo = req.body.phote || photo;
+    user.photo = req.body.photo || photo;
 
     const updatedUser = await user.save();
     res.status(200).json({

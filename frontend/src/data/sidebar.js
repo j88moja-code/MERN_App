@@ -25,7 +25,7 @@ const menu = [
       {
         title: "Edit Profile",
         icon: <AiOutlineEdit />,
-        path: "/profile-update",
+        path: "/edit-profile",
       },
     ],
   },

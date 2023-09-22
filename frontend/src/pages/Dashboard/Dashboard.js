@@ -5,6 +5,7 @@ import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser"
 import { selectIsLoggedIn } from "../../redux/features/auth/authSlice";
 import { getProducts } from "../../redux/features/product/productSlice";
 import ProductList from "../../components/product/productList/ProductList";
+import ProductSummary from "../../components/product/productSummary/ProductSummary";
 
 const Dashboard = () => {
   useRedirectLoggedOutUser("/login");
@@ -19,14 +20,14 @@ const Dashboard = () => {
     if (isLoggedIn === true) {
       dispatch(getProducts());
     }
-    console.log(products);
     if (isError) {
       console.log(message);
     }
-  }, [isLoggedIn, isError, message, dispatch, products]);
+  }, [isLoggedIn, isError, message, dispatch]);
+
   return (
     <div>
-      <h2>Dashboard</h2>
+      <ProductSummary products={products} />
       <ProductList products={products} isLoading={isLoading} />
     </div>
   );

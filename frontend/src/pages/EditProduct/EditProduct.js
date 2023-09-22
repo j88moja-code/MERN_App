@@ -1,33 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  createProduct,
+  getProduct,
+  getProducts,
   selectIsLoading,
+  selectProduct,
+  updateProduct,
 } from "../../redux/features/product/productSlice";
 import Loader from "../../components/loader/Loader";
 import ProductForm from "../../components/product/productForm/ProductForm";
 
-const initialState = {
-  name: "",
-  category: "",
-  quantity: "",
-  price: "",
-};
-
-const AddProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isLoading = useSelector(selectIsLoading);
 
-  const [product, setProduct] = useState(initialState);
+  const productEdit = useSelector(selectProduct);
+
+  const [product, setProduct] = useState(productEdit);
   const [productImage, setProductImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [description, setDescription] = useState("");
 
-  const isLoading = useSelector(selectIsLoading);
+  useEffect(() => {
+    dispatch(getProduct(id));
+  }, [dispatch, id]);
 
-  const { name, category, quantity, price } = product;
+  useEffect(() => {
+    setProduct(productEdit);
+    setImagePreview(
+      productEdit && productEdit.image ? `${productEdit.image.filePath}` : null
+    );
+    setDescription(
+      productEdit && productEdit.description ? productEdit.description : ""
+    );
+  }, [productEdit]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,36 +48,30 @@ const AddProduct = () => {
     setImagePreview(URL.createObjectURL(e.target.files[0]));
   };
 
-  //Generate SKU
-  const generateSKU = (category) => {
-    const letter = category.slice(0, 3).toUpperCase();
-    const number = Date.now();
-    const sku = letter + "-" + number;
-    return sku;
-  };
-
   // Save product to db
-  const saveProduct = async (e) => {
+  const saveEditedProduct = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("sku", generateSKU(category));
-    formData.append("category", category);
-    formData.append("quantity", quantity);
-    formData.append("price", price);
+    formData.append("name", product?.name);
+    formData.append("category", product?.category);
+    formData.append("quantity", product?.quantity);
+    formData.append("price", product?.price);
     formData.append("description", description);
-    formData.append("image", productImage);
+    if (productImage) {
+      formData.append("image", productImage);
+    }
 
     console.log(...formData);
 
-    await dispatch(createProduct(formData));
+    await dispatch(updateProduct({ id, formData }));
+    await dispatch(getProducts());
     navigate("/dashboard");
   };
 
   return (
     <div>
       {isLoading && <Loader />}
-      <h3 className="--mt">Add New Product</h3>
+      <h3 className="--mt">Edit Product</h3>
       <ProductForm
         product={product}
         productImage={productImage}
@@ -77,10 +80,10 @@ const AddProduct = () => {
         setDescription={setDescription}
         handleInputChange={handleInputChange}
         handleImageChange={handleImageChange}
-        saveProduct={saveProduct}
+        saveProduct={saveEditedProduct}
       />
     </div>
   );
 };
 
-export default AddProduct;
+export default EditProduct;
